@@ -26,8 +26,6 @@ package org.scream3r.jssc;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
-import jssc.SerialNativeAccess;
-import jssc.SerialNativeInterface;
 
 /**
  *

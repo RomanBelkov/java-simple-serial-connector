@@ -23,7 +23,7 @@
  * web-site: http://scream3r.org | http://code.google.com/p/java-simple-serial-connector/
  */
 
-package jssc;
+package org.scream3r.jssc;
 
 /**
  *
