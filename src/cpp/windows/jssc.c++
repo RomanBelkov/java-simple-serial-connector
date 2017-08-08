@@ -772,7 +772,10 @@ JNIEXPORT jobjectArray JNICALL Java_jssc_SerialNativeInterface_getPortProperties
 			addWStringToJavaArray(env, ret, retPos, description);
 			retPos++;
 
-			const std::wstring busProvidedDesc = trimAfterFirstNull(busProvidedDescription(deviceInfoSet, &deviceInfoData));
+			std::wstring busProvidedDesc = std::wstring();
+			if (IsWindows7OrGreater()) {
+				busProvidedDesc = trimAfterFirstNull(busProvidedDescription(deviceInfoSet, &deviceInfoData));
+			}
 			addWStringToJavaArray(env, ret, retPos, busProvidedDesc);
 			retPos++;
 
@@ -1059,4 +1062,20 @@ template <typename I> std::wstring intToString(I num) {
 	sstream << std::hex << num;
 	std::wstring result = sstream.str();
 	return result;
+}
+
+static bool IsWindows7OrGreater()
+{
+	OSVERSIONINFOEXW osvi = { sizeof(osvi), 0, 0, 0, 0,{ 0 }, 0, 0 };
+	DWORDLONG const dwlConditionMask = VerSetConditionMask(
+		VerSetConditionMask(
+			VerSetConditionMask(
+				0, VER_MAJORVERSION, VER_GREATER_EQUAL),
+			VER_MINORVERSION, VER_GREATER_EQUAL),
+		VER_SERVICEPACKMAJOR, VER_GREATER_EQUAL);
+	osvi.dwMajorVersion = HIBYTE(_WIN32_WINNT_WIN7);
+	osvi.dwMinorVersion = LOBYTE(_WIN32_WINNT_WIN7);
+	osvi.wServicePackMajor = 0;
+
+	return VerifyVersionInfoW(&osvi, VER_MAJORVERSION | VER_MINORVERSION | VER_SERVICEPACKMAJOR, dwlConditionMask) != FALSE;
 }
