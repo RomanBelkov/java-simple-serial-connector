@@ -35,7 +35,20 @@
 #include <winioctl.h>
 #include <setupapi.h>
 #include <cfgmgr32.h>
-#include <ntddmodm.h>
+
+#ifndef INITGUID
+#define INITGUID
+#include <guiddef.h>
+#undef INITGUID
+#else
+#include <guiddef.h>
+#endif
+
+#ifdef NTDDMODM_DEVINTERFACE_REDEFINITION
+DEFINE_GUID(GUID_DEVINTERFACE_MODEM, 0x2c7089aa, 0x2e0e, 0x11d1, 0xb1, 0x14, 0x00, 0xc0, 0x4f, 0xc2, 0xaa, 0xe4);
+#else
+#include <ntddmodm.h> // for GUID_DEVINTERFACE_MODEM
+#endif
 
 static std::wstring deviceRegistryProperty(HDEVINFO deviceInfoSet,
 	PSP_DEVINFO_DATA deviceInfoData,
@@ -80,3 +93,5 @@ static std::wstring trimAfterFirstNull(std::wstring str);
 static void addWStringToJavaArray(JNIEnv *env, jobjectArray objArray, int pos, std::wstring str);
 
 template <typename I> std::wstring intToString(I num);
+
+static bool IsWindows7OrGreater();
